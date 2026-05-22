@@ -11,6 +11,22 @@ Gaon ke bacchon ke liye UP Board padhai platform — voice doubt, handwritten so
 - Offline chapter download
 - Performance charts & leaderboard
 
+## VS Code mein kholo
+
+1. **File → Open Folder** → `hack (1)` folder
+2. Ya `vidhya-ai-up-board.code-workspace` double-click
+3. Details: `VSCODE_SETUP.md`
+
+## Project files
+
+```
+public/
+  index.html    → HTML layout
+  css/style.css → Styling
+  js/app.js     → JavaScript + API calls
+server.js       → Backend
+```
+
 ## Setup
 
 ```bash

@@ -1,0 +1,11 @@
+{
+  "folders": [
+    {
+      "name": "Vidya AI (Full Project)",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "liveServer.settings.root": "/public"
+  }
+}
