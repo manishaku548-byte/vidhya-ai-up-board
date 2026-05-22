@@ -1,0 +1,1993 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a0a2e">
+<meta name="description" content="UP Board AI Learning Platform - Gaon ke bacchon ke liye smart padhai">
+<link rel="manifest" href="#" id="manifest-link">
+<title>विद्या AI - UP Board Smart Learning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg-deep: #0d0520;
+  --bg-card: #150b30;
+  --bg-glass: rgba(255,255,255,0.06);
+  --accent-saffron: #ff6b1a;
+  --accent-gold: #ffb347;
+  --accent-teal: #00d4b8;
+  --accent-violet: #8b5cf6;
+  --accent-pink: #f472b6;
+  --text-primary: #f0e6ff;
+  --text-secondary: #a78bca;
+  --text-dim: #6b5a8a;
+  --border: rgba(139,92,246,0.2);
+  --shadow-glow: 0 0 30px rgba(139,92,246,0.3);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Animated background */
+body::before {
+  content:'';
+  position:fixed; inset:0; z-index:-1;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 20%, rgba(139,92,246,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 80% 80%, rgba(255,107,26,0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 30% at 50% 50%, rgba(0,212,184,0.05) 0%, transparent 70%),
+    var(--bg-deep);
+}
+
+/* Floating particles */
+.particles { position:fixed; inset:0; z-index:-1; pointer-events:none; }
+.particle {
+  position:absolute; border-radius:50%;
+  animation: float linear infinite;
+  opacity:0.4;
+}
+
+@keyframes float {
+  0% { transform: translateY(100vh) rotate(0deg); opacity:0; }
+  10% { opacity:0.4; }
+  90% { opacity:0.4; }
+  100% { transform: translateY(-10vh) rotate(720deg); opacity:0; }
+}
+
+/* ============ HEADER ============ */
+.header {
+  position:sticky; top:0; z-index:100;
+  background: rgba(13,5,32,0.8);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display:flex; align-items:center; gap:16px;
+  height:60px;
+}
+
+.logo {
+  font-family: 'Baloo 2', cursive;
+  font-size:1.5rem; font-weight:800;
+  background: linear-gradient(135deg, var(--accent-saffron), var(--accent-gold));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
+}
+
+.logo span { color: var(--accent-teal); -webkit-text-fill-color: var(--accent-teal); }
+
+.header-right { margin-left:auto; display:flex; align-items:center; gap:12px; }
+
+.offline-badge {
+  display:flex; align-items:center; gap:6px;
+  background: rgba(0,212,184,0.1); border:1px solid rgba(0,212,184,0.3);
+  padding: 4px 12px; border-radius:20px;
+  font-size:0.7rem; color: var(--accent-teal);
+}
+
+.offline-dot { width:6px; height:6px; border-radius:50%; background:var(--accent-teal); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+.avatar {
+  width:36px; height:36px; border-radius:50%;
+  background: linear-gradient(135deg, var(--accent-violet), var(--accent-pink));
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.85rem; font-weight:700; cursor:pointer;
+  border: 2px solid rgba(255,255,255,0.1);
+}
+
+/* ============ SCREENS ============ */
+.screen { display:none; animation: fadeSlide 0.4s ease; }
+.screen.active { display:block; }
+
+@keyframes fadeSlide {
+  from { opacity:0; transform:translateY(20px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+/* ============ LOGIN SCREEN ============ */
+#screen-login {
+  min-height:calc(100vh - 60px);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:24px;
+}
+#screen-login.active { display:flex; }
+
+.login-card {
+  width:100%; max-width:420px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius:24px;
+  padding:40px 32px;
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-glow);
+}
+
+.login-hero {
+  text-align:center; margin-bottom:32px;
+}
+
+.login-hero .hero-icon {
+  width:80px; height:80px; margin:0 auto 16px;
+  background: linear-gradient(135deg, var(--accent-saffron), var(--accent-violet));
+  border-radius:24px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:2.5rem;
+  box-shadow: 0 8px 32px rgba(139,92,246,0.4);
+}
+
+.login-hero h1 {
+  font-family: 'Baloo 2', cursive;
+  font-size:1.8rem; font-weight:800;
+  background: linear-gradient(135deg, #fff, var(--accent-gold));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  margin-bottom:6px;
+}
+
+.login-hero p { color:var(--text-secondary); font-size:0.9rem; }
+
+.form-group { margin-bottom:16px; }
+
+.form-label {
+  display:block; margin-bottom:6px;
+  font-size:0.8rem; color:var(--text-secondary); font-weight:600;
+  text-transform:uppercase; letter-spacing:0.5px;
+}
+
+.form-input {
+  width:100%; padding:14px 16px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius:var(--radius-sm);
+  color:var(--text-primary);
+  font-family: inherit; font-size:0.95rem;
+  transition: all 0.3s;
+  outline:none;
+}
+.form-input:focus {
+  border-color: var(--accent-violet);
+  background: rgba(139,92,246,0.1);
+  box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
+}
+.form-input::placeholder { color:var(--text-dim); }
+
+.dialect-select {
+  display:grid; grid-template-columns: repeat(3,1fr); gap:8px;
+  margin-bottom:24px;
+}
+
+.dialect-btn {
+  padding:10px 8px; border-radius:var(--radius-sm);
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.03);
+  color: var(--text-secondary);
+  font-family:inherit; font-size:0.78rem; cursor:pointer;
+  transition: all 0.3s; text-align:center;
+}
+.dialect-btn.selected, .dialect-btn:hover {
+  border-color: var(--accent-violet);
+  background: rgba(139,92,246,0.15);
+  color: var(--text-primary);
+}
+.dialect-btn .d-emoji { font-size:1.2rem; display:block; margin-bottom:4px; }
+
+.btn-primary {
+  width:100%; padding:16px;
+  background: linear-gradient(135deg, var(--accent-violet), #6d28d9);
+  border:none; border-radius:var(--radius-sm);
+  color:#fff; font-family:'Baloo 2', cursive;
+  font-size:1rem; font-weight:700; cursor:pointer;
+  transition: all 0.3s;
+  position:relative; overflow:hidden;
+}
+.btn-primary::after {
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+  opacity:0; transition:0.3s;
+}
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(139,92,246,0.4); }
+.btn-primary:hover::after { opacity:1; }
+.btn-primary:active { transform:translateY(0); }
+
+/* ============ MAIN LAYOUT ============ */
+.main-layout {
+  display:grid;
+  grid-template-columns: 240px 1fr;
+  min-height: calc(100vh - 60px);
+}
+
+/* ============ SIDEBAR ============ */
+.sidebar {
+  background: rgba(21,11,48,0.8);
+  border-right: 1px solid var(--border);
+  padding:20px 12px;
+  display:flex; flex-direction:column; gap:4px;
+  position:sticky; top:60px; height:calc(100vh - 60px);
+  overflow-y:auto;
+}
+
+.sidebar-section-label {
+  font-size:0.65rem; color:var(--text-dim);
+  text-transform:uppercase; letter-spacing:1px;
+  padding: 12px 12px 6px;
+  font-weight:700;
+}
+
+.nav-item {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 14px; border-radius:var(--radius-sm);
+  color:var(--text-secondary); cursor:pointer;
+  transition: all 0.25s; font-size:0.88rem;
+  border:1px solid transparent;
+  position:relative;
+}
+.nav-item:hover { color:var(--text-primary); background:rgba(255,255,255,0.05); }
+.nav-item.active {
+  color:var(--text-primary);
+  background: rgba(139,92,246,0.15);
+  border-color: rgba(139,92,246,0.3);
+}
+.nav-item .nav-icon { font-size:1.1rem; width:20px; text-align:center; }
+.nav-item .nav-badge {
+  margin-left:auto; background:var(--accent-saffron);
+  color:#fff; font-size:0.65rem; padding:2px 7px; border-radius:10px;
+  font-weight:700;
+}
+
+.progress-mini {
+  margin-top:auto; padding:16px;
+  background: rgba(255,255,255,0.04);
+  border:1px solid var(--border); border-radius:var(--radius);
+}
+.progress-mini h4 { font-size:0.8rem; color:var(--text-secondary); margin-bottom:8px; }
+.progress-bar-wrap { background:rgba(255,255,255,0.08); border-radius:4px; height:6px; }
+.progress-bar-fill {
+  height:6px; border-radius:4px;
+  background: linear-gradient(90deg, var(--accent-teal), var(--accent-violet));
+  transition: width 1s ease;
+}
+.progress-mini .p-stats {
+  display:flex; justify-content:space-between;
+  margin-top:8px; font-size:0.72rem; color:var(--text-dim);
+}
+
+/* ============ CONTENT AREA ============ */
+.content { padding:28px; overflow-y:auto; }
+
+/* ============ DASHBOARD ============ */
+.dash-greeting {
+  margin-bottom:28px;
+}
+.dash-greeting h2 {
+  font-family:'Baloo 2', cursive;
+  font-size:1.9rem; font-weight:800;
+  line-height:1.2;
+}
+.dash-greeting h2 span { color:var(--accent-gold); }
+.dash-greeting p { color:var(--text-secondary); margin-top:4px; font-size:0.9rem; }
+
+.streak-banner {
+  display:flex; align-items:center; gap:16px;
+  background: linear-gradient(135deg, rgba(255,107,26,0.15), rgba(255,179,71,0.1));
+  border: 1px solid rgba(255,107,26,0.3);
+  border-radius:var(--radius);
+  padding:20px 24px;
+  margin-bottom:28px;
+}
+.streak-banner .fire { font-size:2.5rem; }
+.streak-banner h3 { font-family:'Baloo 2',cursive; font-size:1.3rem; color:var(--accent-gold); }
+.streak-banner p { font-size:0.8rem; color:var(--text-secondary); }
+.streak-days {
+  margin-left:auto; display:flex; gap:4px;
+}
+.streak-day {
+  width:28px; height:28px; border-radius:6px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.65rem; font-weight:700;
+}
+.streak-day.done { background:rgba(255,107,26,0.4); color:var(--accent-gold); }
+.streak-day.today { background:var(--accent-saffron); color:#fff; border:2px solid var(--accent-gold); }
+.streak-day.upcoming { background:rgba(255,255,255,0.06); color:var(--text-dim); }
+
+/* Stats grid */
+.stats-grid {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:16px;
+  margin-bottom:28px;
+}
+
+.stat-card {
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  backdrop-filter:blur(10px);
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor:default;
+}
+.stat-card:hover { transform:translateY(-4px); box-shadow: var(--shadow-glow); }
+
+.stat-icon { font-size:1.8rem; margin-bottom:10px; }
+.stat-value {
+  font-family:'Baloo 2',cursive; font-size:2rem; font-weight:800;
+  line-height:1;
+}
+.stat-label { font-size:0.75rem; color:var(--text-secondary); margin-top:4px; }
+.stat-change { font-size:0.72rem; margin-top:6px; }
+.stat-change.up { color:#4ade80; }
+.stat-change.down { color:#f87171; }
+
+/* Subject cards */
+.section-title {
+  font-family:'Baloo 2',cursive;
+  font-size:1.2rem; font-weight:700;
+  margin-bottom:16px;
+  display:flex; align-items:center; gap:10px;
+}
+.section-title .badge {
+  font-size:0.7rem; background:rgba(139,92,246,0.2);
+  border:1px solid var(--border); color:var(--accent-violet);
+  padding:2px 10px; border-radius:20px; font-weight:600;
+}
+
+.subjects-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
+  margin-bottom:32px;
+}
+
+.subject-card {
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  cursor:pointer;
+  transition: all 0.3s;
+  position:relative; overflow:hidden;
+}
+.subject-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background: var(--c-accent, var(--accent-violet));
+}
+.subject-card:hover {
+  transform:translateY(-4px);
+  border-color: var(--c-accent, var(--accent-violet));
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+.subject-card .s-icon { font-size:2rem; margin-bottom:12px; }
+.subject-card .s-name { font-weight:700; font-size:1rem; margin-bottom:4px; }
+.subject-card .s-progress-text { font-size:0.75rem; color:var(--text-secondary); margin-bottom:10px; }
+.subject-card .s-bar { background:rgba(255,255,255,0.08); border-radius:4px; height:5px; }
+.subject-card .s-fill { height:5px; border-radius:4px; background:var(--c-accent, var(--accent-violet)); }
+.subject-card .s-tag {
+  display:inline-block; margin-top:10px;
+  font-size:0.68rem; padding:3px 10px; border-radius:10px;
+  background:rgba(255,255,255,0.06); color:var(--text-secondary);
+}
+
+/* ============ DIAGNOSTIC TEST ============ */
+.test-container { max-width:720px; margin:0 auto; }
+
+.test-header-card {
+  background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(0,212,184,0.1));
+  border: 1px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px;
+  margin-bottom:24px;
+  display:flex; align-items:center; gap:20px;
+}
+
+.test-progress-ring {
+  width:80px; height:80px; flex-shrink:0;
+}
+
+.q-card {
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius:var(--radius);
+  padding:28px;
+  backdrop-filter:blur(10px);
+}
+
+.q-meta { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+.q-number { font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px; }
+.q-subject-tag {
+  font-size:0.7rem; padding:3px 10px; border-radius:10px;
+  background:rgba(139,92,246,0.2); color:var(--accent-violet);
+  font-weight:600;
+}
+.q-timer {
+  margin-left:auto; display:flex; align-items:center; gap:6px;
+  font-size:0.85rem; color:var(--accent-gold);
+  font-family:'Baloo 2',cursive; font-weight:700;
+}
+
+.q-text { font-size:1.05rem; line-height:1.7; margin-bottom:24px; font-weight:600; }
+
+.options-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:24px; }
+
+.option-btn {
+  padding:14px 18px; border-radius:var(--radius-sm);
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.04);
+  color:var(--text-primary); cursor:pointer;
+  font-family:inherit; font-size:0.9rem;
+  text-align:left; transition: all 0.25s;
+  display:flex; align-items:center; gap:12px;
+}
+.option-btn:hover { border-color:var(--accent-violet); background:rgba(139,92,246,0.1); }
+.option-btn.selected { border-color:var(--accent-violet); background:rgba(139,92,246,0.2); }
+.option-btn.correct { border-color:#4ade80; background:rgba(74,222,128,0.15); }
+.option-btn.wrong { border-color:#f87171; background:rgba(248,113,113,0.15); }
+.option-label {
+  width:28px; height:28px; border-radius:8px; flex-shrink:0;
+  background:rgba(255,255,255,0.08); display:flex; align-items:center;
+  justify-content:center; font-weight:700; font-size:0.8rem;
+}
+
+.q-nav { display:flex; gap:12px; }
+.btn-sec {
+  flex:1; padding:14px;
+  background:rgba(255,255,255,0.06); border:1px solid var(--border);
+  border-radius:var(--radius-sm); color:var(--text-primary);
+  font-family:inherit; font-size:0.9rem; cursor:pointer;
+  transition:all 0.25s;
+}
+.btn-sec:hover { background:rgba(255,255,255,0.1); }
+.btn-pri {
+  flex:2; padding:14px;
+  background:linear-gradient(135deg, var(--accent-violet), #6d28d9);
+  border:none; border-radius:var(--radius-sm); color:#fff;
+  font-family:'Baloo 2',cursive; font-size:1rem; font-weight:700;
+  cursor:pointer; transition:all 0.25s;
+}
+.btn-pri:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(139,92,246,0.4); }
+
+/* ============ STUDY PLAN ============ */
+.plan-grid { display:grid; grid-template-columns:1fr 320px; gap:24px; }
+
+.topic-list { display:flex; flex-direction:column; gap:12px; }
+
+.topic-item {
+  background:var(--bg-glass); border:1px solid var(--border);
+  border-radius:var(--radius); padding:20px;
+  display:flex; align-items:center; gap:16px;
+  cursor:pointer; transition:all 0.3s;
+}
+.topic-item:hover { border-color:var(--accent-violet); transform:translateX(4px); }
+.topic-item.weak { border-left:3px solid var(--accent-saffron); }
+.topic-item.medium { border-left:3px solid var(--accent-gold); }
+.topic-item.strong { border-left:3px solid var(--accent-teal); }
+
+.topic-icon { font-size:1.8rem; }
+.topic-info { flex:1; }
+.topic-info h4 { font-weight:700; margin-bottom:4px; }
+.topic-info p { font-size:0.78rem; color:var(--text-secondary); }
+.topic-info .t-bar { background:rgba(255,255,255,0.08); border-radius:3px; height:4px; margin-top:8px; }
+.topic-info .t-fill { height:4px; border-radius:3px; transition:width 1.5s ease; }
+
+.topic-status {
+  text-align:right;
+}
+.topic-status .t-score { font-family:'Baloo 2',cursive; font-size:1.4rem; font-weight:800; }
+.topic-status .t-label { font-size:0.68rem; color:var(--text-dim); }
+.priority-badge {
+  display:inline-block; font-size:0.65rem; padding:2px 8px; border-radius:8px;
+  font-weight:700; margin-top:4px;
+}
+.priority-badge.high { background:rgba(255,107,26,0.2); color:var(--accent-saffron); }
+.priority-badge.med { background:rgba(255,179,71,0.2); color:var(--accent-gold); }
+.priority-badge.low { background:rgba(0,212,184,0.2); color:var(--accent-teal); }
+
+/* Sidebar plan card */
+.plan-side-card {
+  background:var(--bg-glass); border:1px solid var(--border);
+  border-radius:var(--radius); padding:24px;
+  position:sticky; top:24px;
+}
+.plan-side-card h3 { font-family:'Baloo 2',cursive; font-size:1.1rem; margin-bottom:16px; }
+.today-tasks { display:flex; flex-direction:column; gap:10px; }
+.task-item {
+  display:flex; align-items:center; gap:12px;
+  padding:12px; background:rgba(255,255,255,0.04);
+  border-radius:var(--radius-sm); cursor:pointer;
+  transition:all 0.25s;
+}
+.task-item:hover { background:rgba(255,255,255,0.08); }
+.task-check {
+  width:20px; height:20px; border-radius:6px; flex-shrink:0;
+  border: 2px solid var(--border); display:flex; align-items:center;
+  justify-content:center; transition:all 0.25s;
+}
+.task-check.done { background:var(--accent-teal); border-color:var(--accent-teal); }
+.task-info { flex:1; }
+.task-info .t-name { font-size:0.85rem; font-weight:600; }
+.task-info .t-time { font-size:0.72rem; color:var(--text-dim); }
+
+/* ============ PRACTICE ============ */
+.practice-filters {
+  display:flex; gap:10px; margin-bottom:24px; flex-wrap:wrap;
+}
+.filter-chip {
+  padding:8px 16px; border-radius:20px;
+  border:1px solid var(--border); background:rgba(255,255,255,0.04);
+  color:var(--text-secondary); cursor:pointer; font-family:inherit;
+  font-size:0.82rem; transition:all 0.25s;
+}
+.filter-chip.active, .filter-chip:hover {
+  border-color:var(--accent-violet); background:rgba(139,92,246,0.15);
+  color:var(--text-primary);
+}
+
+.paper-card {
+  background:var(--bg-glass); border:1px solid var(--border);
+  border-radius:var(--radius); padding:24px;
+  margin-bottom:16px; cursor:pointer; transition:all 0.3s;
+  display:flex; align-items:center; gap:20px;
+}
+.paper-card:hover { border-color:var(--accent-violet); transform:translateX(4px); }
+.paper-year {
+  font-family:'Baloo 2',cursive; font-size:2rem; font-weight:800;
+  color:var(--accent-violet); min-width:70px; text-align:center;
+}
+.paper-info { flex:1; }
+.paper-info h4 { font-size:1rem; font-weight:700; margin-bottom:6px; }
+.paper-tags { display:flex; gap:8px; flex-wrap:wrap; }
+.paper-tag {
+  font-size:0.7rem; padding:3px 10px; border-radius:10px;
+  background:rgba(255,255,255,0.06); color:var(--text-secondary);
+}
+.paper-meta { text-align:right; }
+.paper-meta .p-qs { font-family:'Baloo 2',cursive; font-size:1.5rem; font-weight:800; }
+.paper-meta .p-label { font-size:0.72rem; color:var(--text-dim); }
+
+/* ============ VOICE DOUBT ============ */
+.voice-container { max-width:600px; margin:0 auto; text-align:center; }
+
+.voice-orb-wrap { position:relative; margin:40px auto; width:200px; height:200px; }
+.voice-orb {
+  width:200px; height:200px; border-radius:50%;
+  background: linear-gradient(135deg, var(--accent-violet), var(--accent-teal));
+  display:flex; align-items:center; justify-content:center;
+  font-size:3.5rem; cursor:pointer;
+  transition: all 0.3s; box-shadow: 0 0 40px rgba(139,92,246,0.4);
+  position:relative; z-index:1;
+}
+.voice-orb:hover { transform:scale(1.05); box-shadow: 0 0 60px rgba(139,92,246,0.6); }
+.voice-orb.listening {
+  animation: voicePulse 1s ease-in-out infinite;
+  background: linear-gradient(135deg, var(--accent-saffron), var(--accent-violet));
+}
+
+@keyframes voicePulse {
+  0%,100% { box-shadow: 0 0 40px rgba(255,107,26,0.4), 0 0 0 0 rgba(255,107,26,0.4); }
+  50% { box-shadow: 0 0 60px rgba(255,107,26,0.6), 0 0 0 20px rgba(255,107,26,0); }
+}
+
+.voice-rings {
+  position:absolute; inset:-20px;
+  border-radius:50%; border:2px solid rgba(139,92,246,0.2);
+  animation: ringPulse 2s ease-out infinite;
+}
+.voice-rings:nth-child(2) { inset:-40px; animation-delay:0.5s; }
+.voice-rings:nth-child(3) { inset:-60px; animation-delay:1s; }
+@keyframes ringPulse {
+  0% { transform:scale(0.8); opacity:0.6; }
+  100% { transform:scale(1); opacity:0; }
+}
+
+.voice-status {
+  font-size:1.1rem; font-weight:600; margin-bottom:8px;
+  color:var(--text-primary);
+}
+.voice-hint { font-size:0.85rem; color:var(--text-secondary); margin-bottom:32px; }
+
+.voice-result {
+  background:var(--bg-glass); border:1px solid var(--border);
+  border-radius:var(--radius); padding:24px; text-align:left;
+  display:none;
+}
+.voice-result.show { display:block; animation:fadeSlide 0.4s; }
+.voice-result .vr-q { font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px; }
+.voice-result .vr-a { font-size:0.95rem; line-height:1.7; }
+
+.voice-examples {
+  display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:24px;
+}
+.voice-eg {
+  background:rgba(255,255,255,0.04); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:12px;
+  font-size:0.8rem; color:var(--text-secondary); cursor:pointer;
+  transition:all 0.25s; text-align:left;
+}
+.voice-eg:hover { border-color:var(--accent-violet); color:var(--text-primary); }
+.voice-eg strong { display:block; color:var(--text-primary); margin-bottom:4px; font-size:0.75rem; }
+
+/* ============ HANDWRITTEN DOUBT ============ */
+.hw-container { max-width:760px; margin:0 auto; }
+.hw-upload-zone {
+  border:2px dashed var(--border); border-radius:var(--radius);
+  padding:60px 40px; text-align:center; cursor:pointer;
+  transition:all 0.3s; margin-bottom:24px; position:relative;
+}
+.hw-upload-zone:hover, .hw-upload-zone.dragover {
+  border-color:var(--accent-violet);
+  background:rgba(139,92,246,0.05);
+}
+.hw-upload-zone input { position:absolute; inset:0; opacity:0; cursor:pointer; }
+.hw-upload-icon { font-size:3rem; margin-bottom:16px; }
+.hw-upload-zone h3 { font-size:1.1rem; font-weight:700; margin-bottom:8px; }
+.hw-upload-zone p { font-size:0.85rem; color:var(--text-secondary); }
+
+.hw-preview {
+  display:none; margin-bottom:24px;
+}
+.hw-preview.show { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.hw-img-wrap {
+  border-radius:var(--radius); overflow:hidden;
+  border:1px solid var(--border); aspect-ratio:4/3;
+  background:rgba(0,0,0,0.3);
+}
+.hw-img-wrap img { width:100%; height:100%; object-fit:contain; }
+.hw-solution {
+  background:var(--bg-glass); border:1px solid var(--border);
+  border-radius:var(--radius); padding:20px;
+}
+.hw-solution h4 { font-family:'Baloo 2',cursive; margin-bottom:12px; color:var(--accent-teal); }
+.hw-steps { display:flex; flex-direction:column; gap:10px; }
+.hw-step {
+  display:flex; gap:12px; align-items:flex-start;
+  padding:10px; background:rgba(255,255,255,0.04);
+  border-radius:var(--radius-sm);
+}
+.hw-step-num {
+  width:24px; height:24px; border-radius:8px; flex-shrink:0;
+  background:rgba(139,92,246,0.3); display:flex; align-items:center;
+  justify-content:center; font-size:0.75rem; font-weight:700;
+  color:var(--accent-violet);
+}
+.hw-step-text { font-size:0.88rem; line-height:1.6; }
+
+/* ============ PERFORMANCE ============ */
+.perf-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+
+.chart-card {
+  background:var(--bg-glass); border:1px solid var(--border);
+  border-radius:var(--radius); padding:24px;
+}
+.chart-card h3 { font-family:'Baloo 2',cursive; font-size:1rem; margin-bottom:20px; }
+
+.bar-chart { display:flex; align-items:flex-end; gap:8px; height:120px; }
+.bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; }
+.bar {
+  width:100%; border-radius:6px 6px 0 0;
+  background: linear-gradient(180deg, var(--accent-violet), rgba(139,92,246,0.4));
+  transition: height 1.2s ease; min-height:4px;
+}
+.bar-label { font-size:0.65rem; color:var(--text-dim); }
+
+.radar-chart { display:flex; justify-content:center; }
+svg.radar text { font-family:'Noto Sans Devanagari',sans-serif; }
+
+.leaderboard { display:flex; flex-direction:column; gap:10px; }
+.lb-item {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 16px; background:rgba(255,255,255,0.04);
+  border-radius:var(--radius-sm); transition:all 0.25s;
+}
+.lb-item:hover { background:rgba(255,255,255,0.08); }
+.lb-rank {
+  font-family:'Baloo 2',cursive; font-size:1.2rem; font-weight:800;
+  min-width:30px; text-align:center;
+}
+.lb-rank.gold { color:var(--accent-gold); }
+.lb-rank.silver { color:#c0c0c0; }
+.lb-rank.bronze { color:#cd7f32; }
+.lb-avatar { width:36px; height:36px; border-radius:50%; font-size:1.1rem; display:flex; align-items:center; justify-content:center; }
+.lb-name { flex:1; font-size:0.9rem; font-weight:600; }
+.lb-score { font-family:'Baloo 2',cursive; font-size:1rem; font-weight:700; color:var(--accent-teal); }
+
+/* ============ OFFLINE NOTICE ============ */
+.offline-toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(100px);
+  background: rgba(0,212,184,0.15); border:1px solid rgba(0,212,184,0.4);
+  backdrop-filter:blur(20px); border-radius:20px; padding:12px 24px;
+  display:flex; align-items:center; gap:10px; z-index:999;
+  transition: transform 0.4s ease;
+  font-size:0.85rem;
+}
+.offline-toast.show { transform:translateX(-50%) translateY(0); }
+.offline-toast.offline { background:rgba(248,113,113,0.15); border-color:rgba(248,113,113,0.4); }
+
+/* ============ AI LOADING ============ */
+.ai-thinking {
+  display:flex; gap:6px; align-items:center; justify-content:center;
+  padding:16px;
+}
+.ai-dot {
+  width:8px; height:8px; border-radius:50%;
+  background:var(--accent-violet); animation: aiDot 1.2s ease-in-out infinite;
+}
+.ai-dot:nth-child(2) { animation-delay:0.2s; background:var(--accent-teal); }
+.ai-dot:nth-child(3) { animation-delay:0.4s; background:var(--accent-saffron); }
+@keyframes aiDot {
+  0%,60%,100% { transform:translateY(0); opacity:0.4; }
+  30% { transform:translateY(-10px); opacity:1; }
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:900px) {
+  .main-layout { grid-template-columns:1fr; }
+  .sidebar { display:none; }
+  .stats-grid { grid-template-columns:1fr 1fr; }
+  .subjects-grid { grid-template-columns:1fr 1fr; }
+  .plan-grid { grid-template-columns:1fr; }
+  .perf-grid { grid-template-columns:1fr; }
+  .hw-preview.show { grid-template-columns:1fr; }
+  .voice-examples { grid-template-columns:1fr; }
+  .options-grid { grid-template-columns:1fr; }
+}
+
+/* ============ SHIMMER / SKELETON ============ */
+.skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius:8px;
+}
+@keyframes shimmer { 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+
+/* ============ MODAL ============ */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(10px); z-index:200;
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:0.3s;
+}
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal-box {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:24px; padding:32px;
+  max-width:480px; width:90%; transform:scale(0.9);
+  transition:0.3s;
+}
+.modal-overlay.open .modal-box { transform:scale(1); }
+.modal-box h2 { font-family:'Baloo 2',cursive; font-size:1.5rem; margin-bottom:8px; }
+.modal-box p { color:var(--text-secondary); margin-bottom:24px; font-size:0.9rem; line-height:1.6; }
+.modal-actions { display:flex; gap:12px; }
+
+/* Mobile nav */
+.mobile-nav {
+  display:none; position:fixed; bottom:0; left:0; right:0; z-index:100;
+  background:rgba(13,5,32,0.95); backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  padding:8px 0 calc(8px + env(safe-area-inset-bottom));
+  grid-template-columns: repeat(5,1fr);
+}
+@media(max-width:900px) { .mobile-nav { display:grid; } }
+.mob-nav-item {
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:8px; cursor:pointer; transition:all 0.25s;
+  color:var(--text-dim); font-size:0.6rem;
+}
+.mob-nav-item .mn-icon { font-size:1.3rem; }
+.mob-nav-item.active { color:var(--accent-violet); }
+
+@media(max-width:900px) { .content { padding-bottom:80px; } }
+
+/* Scrollbar */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:rgba(139,92,246,0.3); border-radius:4px; }
+</style>
+</head>
+<body>
+
+<!-- Floating Particles -->
+<div class="particles" id="particles"></div>
+
+<!-- HEADER -->
+<header class="header" id="app-header" style="display:none">
+  <div class="logo">विद्या<span>AI</span></div>
+  <div class="header-right">
+    <div class="offline-badge">
+      <div class="offline-dot"></div>
+      <span id="conn-status">Online ✓</span>
+    </div>
+    <div class="avatar" id="user-avatar">अ</div>
+  </div>
+</header>
+
+<!-- ============ SCREEN: LOGIN ============ -->
+<div id="screen-login" class="screen active">
+  <div class="login-card">
+    <div class="login-hero">
+      <div class="hero-icon">📚</div>
+      <h1>विद्या AI</h1>
+      <p>UP Board Students ke liye Smart Learning Platform</p>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">📛 Aapka Naam</label>
+      <input type="text" class="form-input" id="inp-name" placeholder="Jaise: Rahul Kumar" value="Arjun Verma">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">🏫 Class</label>
+      <select class="form-input" id="inp-class">
+        <option>Class 9</option>
+        <option selected>Class 10</option>
+        <option>Class 11</option>
+        <option>Class 12</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">🗣️ Bhasha chuniye (Dialect Select Karein)</label>
+      <div class="dialect-select">
+        <button class="dialect-btn selected" onclick="selectDialect(this,'hindi')">
+          <span class="d-emoji">🇮🇳</span>Hindi
+        </button>
+        <button class="dialect-btn" onclick="selectDialect(this,'awadhi')">
+          <span class="d-emoji">🌾</span>Awadhi Mix
+        </button>
+        <button class="dialect-btn" onclick="selectDialect(this,'hinglish')">
+          <span class="d-emoji">✨</span>Hinglish
+        </button>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="doLogin()">
+      🚀 Padhai Shuru Karein
+    </button>
+
+    <div style="margin-top:20px; padding:14px; background:rgba(0,212,184,0.08); border:1px solid rgba(0,212,184,0.2); border-radius:10px; font-size:0.78rem; color:var(--text-secondary);">
+      📶 <strong style="color:var(--accent-teal)">Offline Mode:</strong> Net band ho toh bhi last downloaded chapters chalenge! Gaon ke students ke liye.
+    </div>
+  </div>
+</div>
+
+<!-- ============ MAIN APP ============ -->
+<div id="screen-app" class="screen">
+  <div class="main-layout">
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div class="sidebar-section-label">Main Menu</div>
+      <div class="nav-item active" onclick="showTab('dashboard',this)">
+        <span class="nav-icon">🏠</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="showTab('diagnostic',this)">
+        <span class="nav-icon">🧪</span> Diagnostic Test <span class="nav-badge">New</span>
+      </div>
+      <div class="nav-item" onclick="showTab('studyplan',this)">
+        <span class="nav-icon">📋</span> Study Plan
+      </div>
+      <div class="nav-item" onclick="showTab('practice',this)">
+        <span class="nav-icon">📝</span> Practice Papers
+      </div>
+
+      <div class="sidebar-section-label">AI Tools</div>
+      <div class="nav-item" onclick="showTab('voice',this)">
+        <span class="nav-icon">🎤</span> Voice Doubt Solver
+      </div>
+      <div class="nav-item" onclick="showTab('handwritten',this)">
+        <span class="nav-icon">✍️</span> Handwritten Doubt
+      </div>
+      <div class="nav-item" onclick="showTab('performance',this)">
+        <span class="nav-icon">📊</span> Performance
+      </div>
+
+      <div class="sidebar-section-label">Settings</div>
+      <div class="nav-item" onclick="showOfflineModal()">
+        <span class="nav-icon">📶</span> Offline Mode
+      </div>
+
+      <div class="progress-mini">
+        <h4>Aaj ki Progress</h4>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="daily-progress-bar" style="width:60%"></div>
+        </div>
+        <div class="p-stats">
+          <span id="daily-done">3/5 tasks</span>
+          <span id="daily-time">45 min</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- CONTENT -->
+    <main class="content">
+
+      <!-- DASHBOARD -->
+      <div id="tab-dashboard" class="tab-pane active" style="display:block">
+        <div class="dash-greeting">
+          <h2>Namaste, <span id="greet-name">Arjun</span> bhaiya! 👋</h2>
+          <p id="greet-line">Aaj kal mein padhai jaari rakhein — board exam nazdeek aa raha hai!</p>
+        </div>
+
+        <!-- Streak Banner -->
+        <div class="streak-banner">
+          <div class="fire">🔥</div>
+          <div>
+            <h3 id="streak-count">7 Din ki Streak!</h3>
+            <p>Lagaataar padh rahe ho — Shabash! 🎉</p>
+          </div>
+          <div class="streak-days" id="streak-days"></div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-value" style="color:var(--accent-gold)">1,240</div>
+            <div class="stat-label">Total Points</div>
+            <div class="stat-change up">↑ +120 is hafte</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value" style="color:var(--accent-teal)">342</div>
+            <div class="stat-label">Questions Solved</div>
+            <div class="stat-change up">↑ +28 aaj</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🎯</div>
+            <div class="stat-value" style="color:var(--accent-violet)">78%</div>
+            <div class="stat-label">Average Score</div>
+            <div class="stat-change up">↑ 4% badha</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⏱️</div>
+            <div class="stat-value" style="color:var(--accent-saffron)">24h</div>
+            <div class="stat-label">Total Study Time</div>
+            <div class="stat-change up">↑ 2h aaj</div>
+          </div>
+        </div>
+
+        <!-- Subjects -->
+        <div class="section-title">
+          📚 Aapke Subjects <span class="badge">Class 10</span>
+        </div>
+        <div class="subjects-grid">
+          <div class="subject-card" style="--c-accent:#f87171" onclick="showTab('practice')">
+            <div class="s-icon">🔢</div>
+            <div class="s-name">Ganit (Mathematics)</div>
+            <div class="s-progress-text">62% Complete</div>
+            <div class="s-bar"><div class="s-fill" style="width:62%; background:#f87171"></div></div>
+            <span class="s-tag">⚠️ Practice Chahiye</span>
+          </div>
+          <div class="subject-card" style="--c-accent:#60a5fa" onclick="showTab('practice')">
+            <div class="s-icon">⚗️</div>
+            <div class="s-name">Vigyan (Science)</div>
+            <div class="s-progress-text">78% Complete</div>
+            <div class="s-bar"><div class="s-fill" style="width:78%; background:#60a5fa"></div></div>
+            <span class="s-tag">✅ Accha Chal Raha Hai</span>
+          </div>
+          <div class="subject-card" style="--c-accent:#4ade80" onclick="showTab('practice')">
+            <div class="s-icon">📖</div>
+            <div class="s-name">Hindi Sahitya</div>
+            <div class="s-progress-text">85% Complete</div>
+            <div class="s-bar"><div class="s-fill" style="width:85%; background:#4ade80"></div></div>
+            <span class="s-tag">🌟 Bahut Badhiya</span>
+          </div>
+          <div class="subject-card" style="--c-accent:#fbbf24" onclick="showTab('practice')">
+            <div class="s-icon">🌍</div>
+            <div class="s-name">Samajik Vigyan</div>
+            <div class="s-progress-text">55% Complete</div>
+            <div class="s-bar"><div class="s-fill" style="width:55%; background:#fbbf24"></div></div>
+            <span class="s-tag">⚠️ Dhyan Do</span>
+          </div>
+          <div class="subject-card" style="--c-accent:#a78bfa" onclick="showTab('practice')">
+            <div class="s-icon">🔤</div>
+            <div class="s-name">English</div>
+            <div class="s-progress-text">48% Complete</div>
+            <div class="s-bar"><div class="s-fill" style="width:48%; background:#a78bfa"></div></div>
+            <span class="s-tag">🆘 Zyada Practice Karo</span>
+          </div>
+          <div class="subject-card" style="--c-accent:#f472b6" onclick="showTab('practice')">
+            <div class="s-icon">💻</div>
+            <div class="s-name">Computer Science</div>
+            <div class="s-progress-text">90% Complete</div>
+            <div class="s-bar"><div class="s-fill" style="width:90%; background:#f472b6"></div></div>
+            <span class="s-tag">🏆 Expert Level</span>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="section-title">⚡ Quick Actions</div>
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px;">
+          <div onclick="showTab('diagnostic')" style="background:var(--bg-glass);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:all 0.3s" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+            <div style="font-size:1.8rem;margin-bottom:8px">🧪</div>
+            <div style="font-size:0.82rem;font-weight:600">Test Do</div>
+          </div>
+          <div onclick="showTab('voice')" style="background:var(--bg-glass);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:all 0.3s" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+            <div style="font-size:1.8rem;margin-bottom:8px">🎤</div>
+            <div style="font-size:0.82rem;font-weight:600">Sawaal Poochho</div>
+          </div>
+          <div onclick="showTab('handwritten')" style="background:var(--bg-glass);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:all 0.3s" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+            <div style="font-size:1.8rem;margin-bottom:8px">✍️</div>
+            <div style="font-size:0.82rem;font-weight:600">Copy Upload</div>
+          </div>
+          <div onclick="showOfflineModal()" style="background:var(--bg-glass);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:all 0.3s" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+            <div style="font-size:1.8rem;margin-bottom:8px">📶</div>
+            <div style="font-size:0.82rem;font-weight:600">Offline Download</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIAGNOSTIC TEST -->
+      <div id="tab-diagnostic" class="tab-pane" style="display:none">
+        <div class="test-container">
+          <h2 class="section-title">🧪 Diagnostic Test — Learning Gap Dhundne ke Liye</h2>
+
+          <div class="test-header-card">
+            <svg class="test-progress-ring" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="6"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="url(#pg)" stroke-width="6"
+                stroke-linecap="round" stroke-dasharray="201"
+                id="ring-progress" stroke-dashoffset="180"
+                transform="rotate(-90 40 40)"/>
+              <defs>
+                <linearGradient id="pg" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="var(--accent-violet)"/>
+                  <stop offset="100%" stop-color="var(--accent-teal)"/>
+                </linearGradient>
+              </defs>
+              <text x="40" y="44" text-anchor="middle" fill="white" font-size="14" font-weight="700" id="ring-text">1/12</text>
+            </svg>
+            <div>
+              <h3 style="font-family:'Baloo 2',cursive;font-size:1.2rem">Aaj ka Diagnostic Test</h3>
+              <p style="color:var(--text-secondary);font-size:0.85rem;margin-top:4px">12 sawaal • Sabhi subjects • 20 minute</p>
+              <p style="color:var(--accent-teal);font-size:0.8rem;margin-top:8px">🎯 Weak topics identify honge — Personalized plan bnega</p>
+            </div>
+            <div style="margin-left:auto;text-align:right">
+              <div style="font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:var(--accent-gold)" id="test-timer-display">19:42</div>
+              <div style="font-size:0.72rem;color:var(--text-dim)">Bacha Time</div>
+            </div>
+          </div>
+
+          <div class="q-card" id="question-card">
+            <div class="q-meta">
+              <span class="q-number" id="q-label">Question 1 of 12</span>
+              <span class="q-subject-tag" id="q-subject">Ganit</span>
+              <span class="q-timer" id="q-timer">⏱ 0:00</span>
+            </div>
+            <div class="q-text" id="q-text">Loading...</div>
+            <div class="options-grid" id="options-grid"></div>
+            <div class="q-nav">
+              <button class="btn-sec" onclick="skipQuestion()">⏭ Skip</button>
+              <button class="btn-pri" id="next-btn" onclick="nextQuestion()" disabled>Next Question →</button>
+            </div>
+          </div>
+
+          <!-- Result will show here -->
+          <div id="test-result" style="display:none">
+            <div style="background:var(--bg-glass);border:1px solid var(--border);border-radius:var(--radius);padding:32px;text-align:center">
+              <div style="font-size:3rem;margin-bottom:16px">🎉</div>
+              <h2 style="font-family:'Baloo 2',cursive;font-size:1.8rem;margin-bottom:8px">Test Complete!</h2>
+              <p style="color:var(--text-secondary);margin-bottom:24px">Aapka score: <strong style="color:var(--accent-gold);font-size:1.3rem" id="result-score">--</strong></p>
+              <div id="weak-topics-list" style="text-align:left;margin-bottom:24px"></div>
+              <button class="btn-pri" onclick="showTab('studyplan')" style="max-width:300px;margin:0 auto;display:block">
+                📋 Study Plan Dekho →
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STUDY PLAN -->
+      <div id="tab-studyplan" class="tab-pane" style="display:none">
+        <h2 class="section-title">📋 Aapka Personalized Study Plan <span class="badge">AI Generated</span></h2>
+
+        <div style="background:linear-gradient(135deg,rgba(255,107,26,0.15),rgba(139,92,246,0.1));border:1px solid rgba(255,107,26,0.3);border-radius:var(--radius);padding:16px 20px;margin-bottom:24px;display:flex;align-items:center;gap:12px;">
+          <span style="font-size:1.5rem">🤖</span>
+          <div>
+            <strong style="color:var(--accent-gold)">AI Analysis:</strong>
+            <span style="color:var(--text-secondary);font-size:0.88rem"> Aapki weak topics pe zyada sawaal, strong topics jaldi complete honge. Learning speed ke hisaab se adapt hoga.</span>
+          </div>
+        </div>
+
+        <div class="plan-grid">
+          <div>
+            <div class="section-title">📌 Topic-wise Roadmap</div>
+            <div class="topic-list" id="topic-list"></div>
+          </div>
+
+          <div class="plan-side-card">
+            <h3>📅 Aaj ke Tasks</h3>
+            <div class="today-tasks" id="today-tasks">
+              <div class="task-item">
+                <div class="task-check done">✓</div>
+                <div class="task-info">
+                  <div class="t-name">Algebra — 20 sawaal</div>
+                  <div class="t-time">✅ Complete — 18 min</div>
+                </div>
+              </div>
+              <div class="task-item" onclick="toggleTask(this)">
+                <div class="task-check"></div>
+                <div class="task-info">
+                  <div class="t-name">Trigonometry Basics</div>
+                  <div class="t-time">⏳ 25 min estimated</div>
+                </div>
+              </div>
+              <div class="task-item" onclick="toggleTask(this)">
+                <div class="task-check"></div>
+                <div class="task-info">
+                  <div class="t-name">Light Chapter — Science</div>
+                  <div class="t-time">⏳ 20 min estimated</div>
+                </div>
+              </div>
+              <div class="task-item" onclick="toggleTask(this)">
+                <div class="task-check"></div>
+                <div class="task-info">
+                  <div class="t-name">English Grammar</div>
+                  <div class="t-time">⏳ 30 min estimated</div>
+                </div>
+              </div>
+              <div class="task-item" onclick="toggleTask(this)">
+                <div class="task-check"></div>
+                <div class="task-info">
+                  <div class="t-name">SST — Civics Chapter 2</div>
+                  <div class="t-time">⏳ 15 min estimated</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top:20px;padding:16px;background:rgba(0,212,184,0.08);border:1px solid rgba(0,212,184,0.2);border-radius:var(--radius-sm)">
+              <div style="font-size:0.8rem;color:var(--accent-teal);font-weight:700;margin-bottom:6px">📊 Weekly Goal</div>
+              <div style="background:rgba(255,255,255,0.08);border-radius:4px;height:8px;margin-bottom:6px">
+                <div style="height:8px;border-radius:4px;background:linear-gradient(90deg,var(--accent-teal),var(--accent-violet));width:60%"></div>
+              </div>
+              <div style="font-size:0.75rem;color:var(--text-secondary)">3/5 dinn complete • 2 baaki</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRACTICE PAPERS -->
+      <div id="tab-practice" class="tab-pane" style="display:none">
+        <h2 class="section-title">📝 UP Board Past Papers <span class="badge">2018–2024</span></h2>
+
+        <div class="practice-filters">
+          <button class="filter-chip active" onclick="filterPaper(this,'all')">Sabhi</button>
+          <button class="filter-chip" onclick="filterPaper(this,'ganit')">🔢 Ganit</button>
+          <button class="filter-chip" onclick="filterPaper(this,'vigyan')">⚗️ Vigyan</button>
+          <button class="filter-chip" onclick="filterPaper(this,'hindi')">📖 Hindi</button>
+          <button class="filter-chip" onclick="filterPaper(this,'english')">🔤 English</button>
+          <button class="filter-chip" onclick="filterPaper(this,'sst')">🌍 SST</button>
+        </div>
+
+        <div id="papers-list"></div>
+      </div>
+
+      <!-- VOICE DOUBT SOLVER -->
+      <div id="tab-voice" class="tab-pane" style="display:none">
+        <div class="voice-container">
+          <h2 class="section-title" style="justify-content:center">🎤 Voice Doubt Solver</h2>
+          <p style="text-align:center;color:var(--text-secondary);margin-bottom:32px">Bol ke sawaal poochho — AI Hindi mein jawab dega!</p>
+
+          <div class="voice-orb-wrap">
+            <div class="voice-rings"></div>
+            <div class="voice-rings"></div>
+            <div class="voice-rings"></div>
+            <div class="voice-orb" id="voice-orb" onclick="toggleVoice()">🎤</div>
+          </div>
+
+          <div class="voice-status" id="voice-status">Dabao aur sawaal poochho</div>
+          <div class="voice-hint" id="voice-hint">Microphone button dabao — phir clearly bolo</div>
+
+          <div class="voice-result" id="voice-result">
+            <div class="vr-q" id="vr-question"></div>
+            <div id="vr-ai-loading" class="ai-thinking" style="display:none">
+              <div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div>
+            </div>
+            <div class="vr-a" id="vr-answer"></div>
+          </div>
+
+          <div class="section-title" style="margin-top:32px;justify-content:center">💡 Try These Examples</div>
+          <div class="voice-examples">
+            <div class="voice-eg" onclick="askVoiceQuestion('Pythagorean theorem kya hai Hindi mein samjhao')">
+              <strong>🔢 Ganit</strong>
+              Pythagorean theorem kya hai?
+            </div>
+            <div class="voice-eg" onclick="askVoiceQuestion('Photosynthesis ka process step by step Hindi mein batao')">
+              <strong>⚗️ Vigyan</strong>
+              Photosynthesis kya hoti hai?
+            </div>
+            <div class="voice-eg" onclick="askVoiceQuestion('UP Board mein passive voice ka rule kya hai example de kar')">
+              <strong>🔤 English</strong>
+              Passive voice kaise banate hain?
+            </div>
+            <div class="voice-eg" onclick="askVoiceQuestion('Mughal Samrajya ke patton ke kya karan the Hindi mein')">
+              <strong>🌍 SST</strong>
+              Mughal empire kyun gira?
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HANDWRITTEN DOUBT -->
+      <div id="tab-handwritten" class="tab-pane" style="display:none">
+        <div class="hw-container">
+          <h2 class="section-title">✍️ Handwritten Doubt Solver <span class="badge">AI Powered</span></h2>
+          <p style="color:var(--text-secondary);margin-bottom:24px;font-size:0.9rem">Copy pe sawaal likhein → Photo khichein → Upload karein → AI step-by-step solution dega Hindi mein!</p>
+
+          <div class="hw-upload-zone" id="hw-zone" ondragover="hwDragOver(event)" ondragleave="hwDragLeave(event)" ondrop="hwDrop(event)">
+            <input type="file" accept="image/*" id="hw-file" onchange="hwFileSelect(event)">
+            <div class="hw-upload-icon">📷</div>
+            <h3>Copy ki Photo Upload Karein</h3>
+            <p>Drag & Drop karein ya click karein<br><span style="color:var(--accent-violet)">JPG, PNG support</span> — Max 10MB</p>
+            <div style="margin-top:16px;display:flex;gap:12px;justify-content:center">
+              <span style="font-size:0.78rem;padding:6px 16px;background:rgba(139,92,246,0.2);border-radius:20px;color:var(--accent-violet)">📱 Camera se lo</span>
+              <span style="font-size:0.78rem;padding:6px 16px;background:rgba(0,212,184,0.2);border-radius:20px;color:var(--accent-teal)">🖼️ Gallery se lo</span>
+            </div>
+          </div>
+
+          <div class="hw-preview" id="hw-preview">
+            <div class="hw-img-wrap">
+              <img id="hw-img" src="" alt="Uploaded question">
+            </div>
+            <div class="hw-solution" id="hw-solution">
+              <h4>🤖 AI Solution (Hindi mein)</h4>
+              <div id="hw-loading" class="ai-thinking">
+                <div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div>
+              </div>
+              <div class="hw-steps" id="hw-steps" style="display:none"></div>
+            </div>
+          </div>
+
+          <div style="margin-top:24px;padding:20px;background:var(--bg-glass);border:1px solid var(--border);border-radius:var(--radius)">
+            <h4 style="font-family:'Baloo 2',cursive;margin-bottom:12px">💡 Tips for Best Results</h4>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:0.82rem;color:var(--text-secondary)">
+              <div>✅ Acchi roshni mein photo lo</div>
+              <div>✅ Sawaal clearly likhein</div>
+              <div>✅ Camera theek seedha rakho</div>
+              <div>✅ Background saaf rakho</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PERFORMANCE -->
+      <div id="tab-performance" class="tab-pane" style="display:none">
+        <h2 class="section-title">📊 Performance Analysis <span class="badge">Real-time</span></h2>
+
+        <div class="stats-grid" style="margin-bottom:24px">
+          <div class="stat-card">
+            <div class="stat-icon">📈</div>
+            <div class="stat-value" style="color:var(--accent-teal)">78%</div>
+            <div class="stat-label">Overall Accuracy</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-value" style="color:var(--accent-gold)">1.8m</div>
+            <div class="stat-label">Avg. Time/Q</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🏆</div>
+            <div class="stat-value" style="color:var(--accent-violet)">#12</div>
+            <div class="stat-label">District Rank</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-value" style="color:var(--accent-saffron)">14</div>
+            <div class="stat-label">Topics Mastered</div>
+          </div>
+        </div>
+
+        <div class="perf-grid">
+          <div class="chart-card">
+            <h3>📅 Weekly Score Trend</h3>
+            <div class="bar-chart" id="bar-chart"></div>
+          </div>
+
+          <div class="chart-card">
+            <h3>🎯 Subject-wise Accuracy</h3>
+            <svg class="radar" viewBox="0 0 240 200" width="100%" id="radar-chart">
+            </svg>
+          </div>
+
+          <div class="chart-card" style="grid-column:1/-1">
+            <h3>🏆 District Leaderboard — Top Students</h3>
+            <div class="leaderboard" id="leaderboard"></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobile-nav" style="display:none">
+  <div class="mob-nav-item active" onclick="showTab('dashboard',this)">
+    <span class="mn-icon">🏠</span>Home
+  </div>
+  <div class="mob-nav-item" onclick="showTab('diagnostic',this)">
+    <span class="mn-icon">🧪</span>Test
+  </div>
+  <div class="mob-nav-item" onclick="showTab('voice',this)">
+    <span class="mn-icon">🎤</span>Voice
+  </div>
+  <div class="mob-nav-item" onclick="showTab('practice',this)">
+    <span class="mn-icon">📝</span>Papers
+  </div>
+  <div class="mob-nav-item" onclick="showTab('performance',this)">
+    <span class="mn-icon">📊</span>Stats
+  </div>
+</div>
+
+<!-- OFFLINE MODAL -->
+<div class="modal-overlay" id="offline-modal">
+  <div class="modal-box">
+    <h2>📶 Offline Mode — Gaon ke liye!</h2>
+    <p>Net na ho tab bhi padhai jaari rakhein. Neeche chapters download karo — wo offline chalenge.</p>
+
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;display:flex;align-items:center;gap:12px">
+        <span style="font-size:1.3rem">🔢</span>
+        <div style="flex:1">
+          <div style="font-size:0.9rem;font-weight:600">Ganit — Chapters 1-8</div>
+          <div style="font-size:0.72rem;color:var(--text-dim)">12.4 MB</div>
+        </div>
+        <button onclick="downloadChapter(this,'Ganit')" style="padding:6px 14px;background:rgba(0,212,184,0.2);border:1px solid rgba(0,212,184,0.3);border-radius:8px;color:var(--accent-teal);font-family:inherit;font-size:0.78rem;cursor:pointer">⬇ Download</button>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;display:flex;align-items:center;gap:12px">
+        <span style="font-size:1.3rem">⚗️</span>
+        <div style="flex:1">
+          <div style="font-size:0.9rem;font-weight:600">Vigyan — Chapters 1-6</div>
+          <div style="font-size:0.72rem;color:var(--text-dim)">9.8 MB</div>
+        </div>
+        <button onclick="downloadChapter(this,'Vigyan')" style="padding:6px 14px;background:rgba(0,212,184,0.2);border:1px solid rgba(0,212,184,0.3);border-radius:8px;color:var(--accent-teal);font-family:inherit;font-size:0.78rem;cursor:pointer">⬇ Download</button>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;display:flex;align-items:center;gap:12px">
+        <span style="font-size:1.3rem">📖</span>
+        <div style="flex:1">
+          <div style="font-size:0.9rem;font-weight:600">Hindi — Pooraa Syllabus</div>
+          <div style="font-size:0.72rem;color:var(--text-dim)">7.2 MB</div>
+        </div>
+        <button onclick="downloadChapter(this,'Hindi')" style="padding:6px 14px;background:rgba(0,212,184,0.2);border:1px solid rgba(0,212,184,0.3);border-radius:8px;color:var(--accent-teal);font-family:inherit;font-size:0.78rem;cursor:pointer">⬇ Download</button>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-sec" onclick="closeModal('offline-modal')" style="flex:1">Close</button>
+      <button class="btn-pri" onclick="closeModal('offline-modal')" style="flex:1">Done ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- OFFLINE TOAST -->
+<div class="offline-toast" id="offline-toast">
+  <span>📶</span>
+  <span id="toast-msg">Last downloaded content available offline</span>
+</div>
+
+<script>
+// ============ APP STATE ============
+const state = {
+  user: { name:'Arjun Verma', class:'Class 10', dialect:'hindi', avatar:'अ' },
+  currentQ: 0,
+  answers: [],
+  testActive: false,
+  timer: null,
+  qTimer: null,
+  qSeconds: 0,
+  voiceListening: false,
+  recognition: null,
+  streak: 7,
+};
+
+// ============ QUESTIONS DB ============
+const questions = [
+  { subject:'Ganit', text:'यदि a + b = 5 और ab = 6 हो, तो a² + b² का मान क्या होगा?', options:['10','12','13','11'], correct:2 },
+  { subject:'Vigyan', text:'प्रकाश संश्लेषण की क्रिया में कौन सी गैस निकलती है?', options:['CO₂','N₂','O₂','H₂'], correct:2 },
+  { subject:'Hindi', text:'\"रामचरितमानस\" के रचयिता कौन हैं?', options:['कबीरदास','तुलसीदास','सूरदास','मीराबाई'], correct:1 },
+  { subject:'English', text:'Choose the correct passive voice: "She writes a letter."', options:['A letter writes by her','A letter is written by her','A letter was written by her','A letter written by her'], correct:1 },
+  { subject:'SST', text:'भारत में पंचायती राज की शुरुआत किस राज्य से हुई?', options:['UP','Bihar','Rajasthan','MP'], correct:2 },
+  { subject:'Ganit', text:'sin²θ + cos²θ = ?', options:['0','2','1','sin 2θ'], correct:2 },
+  { subject:'Vigyan', text:'ओम का नियम क्या है?', options:['V = I/R','V = IR','I = VR','R = VI'], correct:1 },
+  { subject:'Hindi', text:'\"दोहा\" छंद में कितनी मात्राएं होती हैं?', options:['24','13','16','11'], correct:0 },
+  { subject:'English', text:'Which is a correct sentence?', options:['I goes to school','He go to market','She goes to temple','They goes home'], correct:2 },
+  { subject:'SST', text:'भारत का संविधान कब लागू हुआ?', options:['15 Aug 1947','26 Nov 1949','26 Jan 1950','2 Oct 1950'], correct:2 },
+  { subject:'Ganit', text:'एक वृत्त की त्रिज्या 7 cm है। उसका क्षेत्रफल क्या होगा? (π = 22/7)', options:['154 cm²','44 cm²','49 cm²','308 cm²'], correct:0 },
+  { subject:'Vigyan', text:'DNA का पूरा नाम क्या है?', options:['Deoxyribose Nucleic Acid','Diribonucleic Acid','Deoxyribonucleic Acid','Dioxy Nucleic Acid'], correct:2 },
+];
+
+// ============ PARTICLES ============
+function createParticles() {
+  const p = document.getElementById('particles');
+  const colors = ['#8b5cf6','#ff6b1a','#00d4b8','#f472b6','#fbbf24'];
+  for(let i=0;i<20;i++){
+    const d=document.createElement('div');
+    d.className='particle';
+    const size=Math.random()*4+2;
+    d.style.cssText=`
+      width:${size}px;height:${size}px;
+      left:${Math.random()*100}%;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration:${Math.random()*15+10}s;
+      animation-delay:${Math.random()*10}s;
+    `;
+    p.appendChild(d);
+  }
+}
+
+// ============ LOGIN ============
+let selectedDialect = 'hindi';
+
+function selectDialect(btn, d) {
+  document.querySelectorAll('.dialect-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedDialect = d;
+}
+
+function doLogin() {
+  const name = document.getElementById('inp-name').value.trim() || 'Student';
+  const cls = document.getElementById('inp-class').value;
+  state.user.name = name;
+  state.user.class = cls;
+  state.user.dialect = selectedDialect;
+  state.user.avatar = name.charAt(0);
+
+  document.getElementById('screen-login').classList.remove('active');
+  document.getElementById('screen-app').classList.add('active');
+  document.getElementById('app-header').style.display='flex';
+  document.getElementById('mobile-nav').style.display='grid';
+  document.getElementById('user-avatar').textContent = state.user.avatar;
+  document.getElementById('greet-name').textContent = name.split(' ')[0];
+
+  const greets = {
+    hindi: `Aaj kal mein padhai jaari rakhein — board exam nazdeek aa raha hai!`,
+    awadhi: `रोज पढ़ो, होशियार बनो — बोर्ड परीक्षा आवत बा!`,
+    hinglish: `Keep it up! Board exam is coming soon — let's crush it! 💪`
+  };
+  document.getElementById('greet-line').textContent = greets[selectedDialect];
+
+  buildStreakDays();
+  buildTopicList();
+  buildPapers();
+  buildPerformance();
+  initQuestions();
+  showOfflineToast('🎉 Welcome! App ready — offline mode active');
+}
+
+// ============ STREAK ============
+function buildStreakDays() {
+  const days = ['So','Mo','Tu','We','Th','Fr','Sa'];
+  const today = new Date().getDay();
+  let html='';
+  days.forEach((d,i)=>{
+    let cls = i < today ? 'done' : (i===today ? 'today' : 'upcoming');
+    html+=`<div class="streak-day ${cls}">${d}</div>`;
+  });
+  document.getElementById('streak-days').innerHTML=html;
+}
+
+// ============ TABS ============
+function showTab(name, navEl) {
+  document.querySelectorAll('.tab-pane').forEach(p=>p.style.display='none');
+  const t = document.getElementById('tab-'+name);
+  if(t){t.style.display='block';}
+
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.mob-nav-item').forEach(n=>n.classList.remove('active'));
+  if(navEl){
+    navEl.classList.add('active');
+    // Also sync mobile nav
+    const idx = [...document.querySelectorAll('.nav-item')].indexOf(navEl);
+    const mobItems = document.querySelectorAll('.mob-nav-item');
+    if(mobItems[idx]) mobItems[idx].classList.add('active');
+  }
+
+  if(name==='performance') renderPerformanceCharts();
+}
+
+// ============ DIAGNOSTIC TEST ============
+function initQuestions() {
+  state.currentQ = 0;
+  state.answers = new Array(questions.length).fill(null);
+  loadQuestion();
+  startTestTimer();
+}
+
+let testTimeLeft = 20*60;
+let testTimerInterval;
+
+function startTestTimer() {
+  clearInterval(testTimerInterval);
+  testTimerInterval = setInterval(()=>{
+    testTimeLeft--;
+    const m=Math.floor(testTimeLeft/60), s=testTimeLeft%60;
+    document.getElementById('test-timer-display').textContent=`${m}:${s.toString().padStart(2,'0')}`;
+    if(testTimeLeft<=0){ clearInterval(testTimerInterval); endTest(); }
+  },1000);
+}
+
+let qTimerInterval;
+function startQTimer() {
+  state.qSeconds=0;
+  clearInterval(qTimerInterval);
+  qTimerInterval = setInterval(()=>{
+    state.qSeconds++;
+    const m=Math.floor(state.qSeconds/60), s=state.qSeconds%60;
+    document.getElementById('q-timer').textContent=`⏱ ${m}:${s.toString().padStart(2,'0')}`;
+  },1000);
+}
+
+function loadQuestion() {
+  const q = questions[state.currentQ];
+  const total = questions.length;
+  const done = state.currentQ;
+
+  document.getElementById('q-label').textContent=`Question ${done+1} of ${total}`;
+  document.getElementById('q-subject').textContent=q.subject;
+  document.getElementById('q-text').textContent=q.text;
+  document.getElementById('next-btn').disabled=true;
+
+  // Update ring
+  const offset = 201 - (201*(done/total));
+  document.getElementById('ring-progress').style.strokeDashoffset=offset;
+  document.getElementById('ring-text').textContent=`${done+1}/${total}`;
+
+  // Options
+  const labels=['A','B','C','D'];
+  const grid=document.getElementById('options-grid');
+  grid.innerHTML='';
+  q.options.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='option-btn';
+    btn.innerHTML=`<span class="option-label">${labels[i]}</span>${opt}`;
+    btn.onclick=()=>selectAnswer(i,btn);
+    grid.appendChild(btn);
+  });
+
+  startQTimer();
+}
+
+function selectAnswer(idx, btn) {
+  document.querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.answers[state.currentQ]=idx;
+  document.getElementById('next-btn').disabled=false;
+}
+
+function nextQuestion() {
+  const q=questions[state.currentQ];
+  const ans=state.answers[state.currentQ];
+  const btns=document.querySelectorAll('.option-btn');
+
+  if(ans!==null){
+    btns[q.correct].classList.add('correct');
+    if(ans!==q.correct) btns[ans].classList.add('wrong');
+  }
+
+  setTimeout(()=>{
+    state.currentQ++;
+    if(state.currentQ>=questions.length){ endTest(); }
+    else { loadQuestion(); }
+  },600);
+}
+
+function skipQuestion() {
+  state.currentQ++;
+  if(state.currentQ>=questions.length){ endTest(); }
+  else { loadQuestion(); }
+}
+
+function endTest() {
+  clearInterval(testTimerInterval);
+  clearInterval(qTimerInterval);
+  document.getElementById('question-card').style.display='none';
+  document.getElementById('test-result').style.display='block';
+
+  let correct=0;
+  state.answers.forEach((a,i)=>{ if(a===questions[i].correct) correct++; });
+  const pct=Math.round((correct/questions.length)*100);
+  document.getElementById('result-score').textContent=`${pct}% (${correct}/${questions.length})`;
+
+  // Weak topics
+  const subjectScore={};
+  questions.forEach((q,i)=>{
+    if(!subjectScore[q.subject]) subjectScore[q.subject]={right:0,total:0};
+    subjectScore[q.subject].total++;
+    if(state.answers[i]===q.correct) subjectScore[q.subject].right++;
+  });
+
+  let weakHtml='<h4 style="margin-bottom:12px;font-family:\'Baloo 2\',cursive">🔍 Learning Gaps Found:</h4>';
+  Object.entries(subjectScore).forEach(([sub,sc])=>{
+    const pct2=Math.round((sc.right/sc.total)*100);
+    const color=pct2<50?'var(--accent-saffron)':pct2<75?'var(--accent-gold)':'var(--accent-teal)';
+    const tag=pct2<50?'❗ Weak — Zyada Practice':'pct2<75?⚠️ Average':'✅ Strong';
+    weakHtml+=`<div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(255,255,255,0.04);border-radius:8px;margin-bottom:8px">
+      <span style="flex:1;font-weight:600">${sub}</span>
+      <span style="color:${color};font-size:0.85rem">${pct2}%</span>
+      <span style="font-size:0.72rem;padding:2px 8px;background:rgba(255,255,255,0.06);border-radius:6px;color:var(--text-secondary)">${pct2<50?'❗ Zyada Practice Karo':pct2<75?'⚠️ Thoda aur padho':'✅ Bahut Accha'}</span>
+    </div>`;
+  });
+  document.getElementById('weak-topics-list').innerHTML=weakHtml;
+}
+
+// ============ STUDY PLAN ============
+const topics=[
+  {icon:'📐',name:'Trigonometry',sub:'Ganit',score:42,status:'weak',priority:'high'},
+  {icon:'🔤',name:'Passive Voice',sub:'English',score:38,status:'weak',priority:'high'},
+  {icon:'🗳️',name:'Civics — Democracy',sub:'SST',score:55,status:'medium',priority:'med'},
+  {icon:'💡',name:'Electricity',sub:'Vigyan',score:68,status:'medium',priority:'med'},
+  {icon:'📝',name:'Nibandh Lekhan',sub:'Hindi',score:75,status:'medium',priority:'med'},
+  {icon:'📊',name:'Statistics',sub:'Ganit',score:82,status:'strong',priority:'low'},
+  {icon:'🌱',name:'Life Processes',sub:'Vigyan',score:88,status:'strong',priority:'low'},
+  {icon:'📖',name:'Kabir ki Sakhiyaan',sub:'Hindi',score:91,status:'strong',priority:'low'},
+];
+
+function buildTopicList() {
+  const colors={weak:'var(--accent-saffron)',medium:'var(--accent-gold)',strong:'var(--accent-teal)'};
+  document.getElementById('topic-list').innerHTML=topics.map(t=>`
+    <div class="topic-item ${t.status}">
+      <div class="topic-icon">${t.icon}</div>
+      <div class="topic-info">
+        <h4>${t.name}</h4>
+        <p>${t.sub}</p>
+        <div class="t-bar"><div class="t-fill" style="width:${t.score}%;background:${colors[t.status]}"></div></div>
+      </div>
+      <div class="topic-status">
+        <div class="t-score" style="color:${colors[t.status]}">${t.score}%</div>
+        <div class="t-label">Score</div>
+        <div class="priority-badge ${t.priority==='high'?'high':t.priority==='med'?'med':'low'}">${t.priority==='high'?'High Priority':t.priority==='med'?'Medium':'Done ✓'}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleTask(item){
+  const check=item.querySelector('.task-check');
+  check.classList.toggle('done');
+  if(check.classList.contains('done')) check.textContent='✓';
+  else check.textContent='';
+}
+
+// ============ PRACTICE PAPERS ============
+const papers=[
+  {year:2024,name:'UP Board Class 10 — Full Paper',subject:'ganit',tags:['Ganit','Vigyan','Hindi'],questions:90,duration:'3 hrs'},
+  {year:2023,name:'UP Board Class 10 — Full Paper',subject:'vigyan',tags:['SST','English','Computer'],questions:90,duration:'3 hrs'},
+  {year:2022,name:'UP Board Ganit Special Paper',subject:'ganit',tags:['Ganit','Algebra','Geometry'],questions:50,duration:'2 hrs'},
+  {year:2022,name:'UP Board Vigyan Chapter-wise',subject:'vigyan',tags:['Physics','Chemistry','Biology'],questions:60,duration:'2.5 hrs'},
+  {year:2021,name:'UP Board Hindi Sahitya Paper',subject:'hindi',tags:['Kavita','Gadya','Nibandh'],questions:45,duration:'2 hrs'},
+  {year:2021,name:'UP Board English Paper',subject:'english',tags:['Grammar','Reading','Writing'],questions:40,duration:'2 hrs'},
+  {year:2020,name:'UP Board SST Paper',subject:'sst',tags:['History','Geography','Civics'],questions:70,duration:'3 hrs'},
+  {year:2019,name:'UP Board Computer Paper',subject:'all',tags:['MS Office','Internet','Programming'],questions:35,duration:'1.5 hrs'},
+];
+
+function buildPapers(filter='all'){
+  const filtered=papers.filter(p=>filter==='all'||p.subject===filter||filter==='all');
+  document.getElementById('papers-list').innerHTML=filtered.map(p=>`
+    <div class="paper-card">
+      <div class="paper-year">${p.year}</div>
+      <div class="paper-info">
+        <h4>${p.name}</h4>
+        <div class="paper-tags">${p.tags.map(t=>`<span class="paper-tag">${t}</span>`).join('')}</div>
+      </div>
+      <div class="paper-meta">
+        <div class="p-qs">${p.questions}</div>
+        <div class="p-label">Questions</div>
+        <div style="font-size:0.72rem;color:var(--text-dim);margin-top:4px">⏱ ${p.duration}</div>
+        <button onclick="showOfflineToast('📝 Paper download ho raha hai...')" style="margin-top:8px;padding:6px 14px;background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.3);border-radius:8px;color:var(--accent-violet);font-family:inherit;font-size:0.75rem;cursor:pointer">▶ Attempt</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterPaper(btn, filter){
+  document.querySelectorAll('.filter-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  buildPapers(filter);
+}
+
+// ============ VOICE DOUBT ============
+function toggleVoice() {
+  if(!state.voiceListening){ startVoice(); }
+  else { stopVoice(); }
+}
+
+function startVoice(){
+  state.voiceListening=true;
+  const orb=document.getElementById('voice-orb');
+  orb.classList.add('listening');
+  orb.textContent='🔴';
+  document.getElementById('voice-status').textContent='Bol rahe ho... sun raha hun!';
+  document.getElementById('voice-hint').textContent='Clearly bolo — phir ruko';
+
+  if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    state.recognition = new SR();
+    state.recognition.lang='hi-IN';
+    state.recognition.interimResults=false;
+    state.recognition.onresult=(e)=>{
+      const transcript=e.results[0][0].transcript;
+      askVoiceQuestion(transcript);
+    };
+    state.recognition.onerror=()=>{ stopVoice(); askVoiceQuestion('Pythagorean theorem kya hai?'); };
+    state.recognition.onend=()=>{ stopVoice(); };
+    state.recognition.start();
+  } else {
+    setTimeout(()=>{ stopVoice(); askVoiceQuestion('Trigonometry mein sin aur cos ka kya matlab hai?'); }, 2000);
+  }
+}
+
+function stopVoice(){
+  state.voiceListening=false;
+  const orb=document.getElementById('voice-orb');
+  orb.classList.remove('listening');
+  orb.textContent='🎤';
+  document.getElementById('voice-status').textContent='Jawab aa raha hai...';
+  if(state.recognition) { try{ state.recognition.stop(); }catch(e){} }
+}
+
+async function askVoiceQuestion(question){
+  stopVoice();
+  const result=document.getElementById('voice-result');
+  result.classList.add('show');
+  document.getElementById('vr-question').textContent='🎤 Aapka Sawaal: '+question;
+  document.getElementById('vr-answer').textContent='';
+  document.getElementById('vr-ai-loading').style.display='flex';
+  document.getElementById('voice-status').textContent='AI soch raha hai...';
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:`Tum ek helpful UP Board teacher ho. Student ke sawaal ka jawab SIRF Hindi mein do (Hinglish allowed hai). 
+        Jawab SHORT aur SIMPLE rakho — jaise ek gaon ka teacher samjhaye. Step-by-step batao. Max 150 words.`,
+        messages:[{role:'user',content:question}]
+      })
+    });
+    const d=await resp.json();
+    const ans=d.content?.[0]?.text||'Kshama karo, abhi jawab nahi de sakta.';
+    document.getElementById('vr-ai-loading').style.display='none';
+    document.getElementById('vr-answer').textContent=ans;
+    document.getElementById('voice-status').textContent='Jawab tayaar! ✅';
+    document.getElementById('voice-hint').textContent='Dobara sawaal poochne ke liye button dabaein';
+  } catch(e) {
+    document.getElementById('vr-ai-loading').style.display='none';
+    document.getElementById('vr-answer').textContent='Net connection check karo. Offline mode mein saved content use karo.';
+    document.getElementById('voice-status').textContent='Error — Net check karo';
+  }
+}
+
+// ============ HANDWRITTEN DOUBT ============
+function hwDragOver(e){ e.preventDefault(); document.getElementById('hw-zone').classList.add('dragover'); }
+function hwDragLeave(e){ document.getElementById('hw-zone').classList.remove('dragover'); }
+function hwDrop(e){ e.preventDefault(); hwDragLeave(); const f=e.dataTransfer.files[0]; if(f) processHWFile(f); }
+function hwFileSelect(e){ const f=e.target.files[0]; if(f) processHWFile(f); }
+
+async function processHWFile(file) {
+  const reader=new FileReader();
+  reader.onload=(e)=>{
+    const url=e.target.result;
+    document.getElementById('hw-img').src=url;
+    document.getElementById('hw-preview').classList.add('show');
+    document.getElementById('hw-steps').style.display='none';
+    document.getElementById('hw-loading').style.display='flex';
+    solveHandwritten(url);
+  };
+  reader.readAsDataURL(file);
+}
+
+async function solveHandwritten(base64url) {
+  const base64=base64url.split(',')[1];
+  const mimeType=base64url.split(';')[0].split(':')[1];
+
+  try {
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:`Tum ek UP Board teacher ho. Student ne copy pe sawaal likha hai. Image dekho aur sawaal identify karo.
+        Phir STEP BY STEP solution do Hindi mein. Format:
+        SAWAAL: [sawaal ka description]
+        STEP 1: [explanation]
+        STEP 2: [explanation]
+        ... aur aise hi
+        ANSWER: [final answer]
+        
+        SIRF Hindi mein likho. Simple language use karo.`,
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:mimeType,data:base64}},
+          {type:'text',text:'Is image mein jo sawaal hai uska step-by-step solution do Hindi mein.'}
+        ]}]
+      })
+    });
+    const d=await resp.json();
+    const sol=d.content?.[0]?.text||'Image clearly nahi dikh rahi. Dobara try karo.';
+    document.getElementById('hw-loading').style.display='none';
+
+    const steps=sol.split('\n').filter(s=>s.trim());
+    document.getElementById('hw-steps').innerHTML=steps.map((s,i)=>`
+      <div class="hw-step">
+        <div class="hw-step-num">${i+1}</div>
+        <div class="hw-step-text">${s}</div>
+      </div>
+    `).join('');
+    document.getElementById('hw-steps').style.display='flex';
+  } catch(e) {
+    document.getElementById('hw-loading').style.display='none';
+    document.getElementById('hw-steps').innerHTML=`<div class="hw-step"><div class="hw-step-num">!</div><div class="hw-step-text">Net connection check karo ya baad mein try karo.</div></div>`;
+    document.getElementById('hw-steps').style.display='flex';
+  }
+}
+
+// ============ PERFORMANCE CHARTS ============
+const weekData=[62,70,68,75,72,80,78];
+const weekDays=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+function buildPerformance(){}
+
+function renderPerformanceCharts(){
+  // Bar chart
+  const max=Math.max(...weekData);
+  document.getElementById('bar-chart').innerHTML=weekData.map((v,i)=>`
+    <div class="bar-wrap">
+      <div class="bar" style="height:${(v/max)*100}px"></div>
+      <div class="bar-label">${weekDays[i]}</div>
+    </div>
+  `).join('');
+
+  // Radar
+  const subjects=[
+    {name:'Ganit',val:0.62},{name:'Vigyan',val:0.78},{name:'Hindi',val:0.85},
+    {name:'SST',val:0.55},{name:'Eng',val:0.48}
+  ];
+  const cx=120,cy=100,r=70;
+  const n=subjects.length;
+  const angles=subjects.map((_,i)=>((i*2*Math.PI/n)-(Math.PI/2)));
+
+  const gridPts=(scale)=>angles.map(a=>`${cx+r*scale*Math.cos(a)},${cy+r*scale*Math.sin(a)}`).join(' ');
+  const dataPts=subjects.map((s,i)=>`${cx+r*s.val*Math.cos(angles[i])},${cy+r*s.val*Math.sin(angles[i])}`).join(' ');
+  const axisLines=angles.map(a=>`<line x1="${cx}" y1="${cy}" x2="${cx+r*Math.cos(a)}" y2="${cy+r*Math.sin(a)}" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>`).join('');
+  const labels=subjects.map((s,i)=>{
+    const x=cx+(r+14)*Math.cos(angles[i]);
+    const y=cy+(r+14)*Math.sin(angles[i]);
+    return `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" fill="#a78bca" font-size="9">${s.name}</text>`;
+  }).join('');
+
+  document.getElementById('radar-chart').innerHTML=`
+    <polygon points="${gridPts(1)}" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+    <polygon points="${gridPts(0.75)}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <polygon points="${gridPts(0.5)}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+    <polygon points="${gridPts(0.25)}" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+    ${axisLines}
+    <polygon points="${dataPts}" fill="rgba(139,92,246,0.3)" stroke="var(--accent-violet)" stroke-width="2"/>
+    ${labels}
+  `;
+
+  // Leaderboard
+  const lb=[
+    {rank:'🥇',name:'Priya Sharma',school:'DAV Lucknow',score:1580,av:'प'},
+    {rank:'🥈',name:'Rohit Kumar',school:'KV Varanasi',score:1520,av:'र'},
+    {rank:'🥉',name:'Anjali Singh',school:'GM Inter College',score:1490,av:'अ'},
+    {rank:'4',name:'Arjun Verma',school:'Local School',score:1240,av:'A',isYou:true},
+    {rank:'5',name:'Deepak Yadav',school:'SDM Inter College',score:1210,av:'D'},
+  ];
+  document.getElementById('leaderboard').innerHTML=lb.map(l=>`
+    <div class="lb-item" ${l.isYou?'style="border:1px solid rgba(139,92,246,0.4);background:rgba(139,92,246,0.1)"':''}>
+      <div class="lb-rank">${l.rank}</div>
+      <div class="lb-avatar" style="background:linear-gradient(135deg,var(--accent-violet),var(--accent-teal))">${l.av}</div>
+      <div class="lb-name">
+        ${l.name} ${l.isYou?'<span style="font-size:0.68rem;padding:2px 8px;background:rgba(139,92,246,0.3);border-radius:6px;color:var(--accent-violet)">You</span>':''}
+        <div style="font-size:0.72rem;color:var(--text-dim)">${l.school}</div>
+      </div>
+      <div class="lb-score">${l.score.toLocaleString()} pts</div>
+    </div>
+  `).join('');
+}
+
+// ============ OFFLINE MODAL ============
+function showOfflineModal(){ document.getElementById('offline-modal').classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+function downloadChapter(btn, name){
+  btn.textContent='⏳ Downloading...';
+  btn.disabled=true;
+  setTimeout(()=>{
+    btn.textContent='✅ Downloaded';
+    btn.style.color='var(--accent-teal)';
+    showOfflineToast(`✅ ${name} chapter offline ke liye save ho gaya!`);
+    // Store in localStorage as marker
+    localStorage.setItem(`offline_${name}`,JSON.stringify({
+      downloaded: new Date().toISOString(),
+      subject: name
+    }));
+  },2000);
+}
+
+// ============ TOAST ============
+let toastTimeout;
+function showOfflineToast(msg, type=''){
+  const t=document.getElementById('offline-toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.className='offline-toast show '+type;
+  clearTimeout(toastTimeout);
+  toastTimeout=setTimeout(()=>{ t.className='offline-toast'; },3500);
+}
+
+// ============ NETWORK DETECTION ============
+window.addEventListener('online',()=>{
+  document.getElementById('conn-status').textContent='Online ✓';
+  document.querySelector('.offline-dot').style.background='var(--accent-teal)';
+  showOfflineToast('📶 Net wapas aa gaya!');
+});
+window.addEventListener('offline',()=>{
+  document.getElementById('conn-status').textContent='Offline';
+  document.querySelector('.offline-dot').style.background='#f87171';
+  showOfflineToast('📵 Net nahi hai — Offline mode active','offline');
+});
+
+// Close modal on overlay click
+document.getElementById('offline-modal').addEventListener('click',function(e){
+  if(e.target===this) closeModal('offline-modal');
+});
+
+// ============ PWA MANIFEST ============
+const manifest={
+  name:'Vidya AI — UP Board Learning',
+  short_name:'VidyaAI',
+  description:'UP Board Students ke liye Smart Learning',
+  start_url:'/',
+  display:'standalone',
+  background_color:'#0d0520',
+  theme_color:'#8b5cf6',
+  icons:[{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📚</text></svg>',sizes:'any',type:'image/svg+xml'}]
+};
+const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+document.getElementById('manifest-link').href=URL.createObjectURL(blob);
+
+// ============ SERVICE WORKER ============
+if('serviceWorker' in navigator){
+  const swCode=`
+    const CACHE='vidya-ai-v1';
+    const OFFLINE_ASSETS=['/'];
+    self.addEventListener('install',e=>{ e.waitUntil(caches.open(CACHE).then(c=>c.addAll(OFFLINE_ASSETS))); });
+    self.addEventListener('fetch',e=>{ e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>new Response('Offline')))); });
+  `;
+  const swBlob=new Blob([swCode],{type:'application/javascript'});
+  const swUrl=URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl).catch(()=>{});
+}
+
+// ============ INIT ============
+createParticles();
+</script>
+</body>
+</html>
