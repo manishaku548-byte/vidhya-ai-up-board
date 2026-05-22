@@ -36,15 +36,7 @@ Browser: **http://localhost:3000**
 
 ## GitHub Repository
 
-**Link:** https://github.com/manishaku458/vidhya-ai-up-board
-
-Code upload (terminal mein — GitHub login email: `manishaku458@gmail.com`):
-
-```powershell
-cd "c:\Users\user\Downloads\hack (1)"
-git remote set-url origin https://github.com/manishaku458/vidhya-ai-up-board.git
-git push -u origin main
-```
+**Link:** https://github.com/manishaku548-byte/vidhya-ai-up-board
 
 ## Deploy
 
