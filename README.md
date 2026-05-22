@@ -34,6 +34,18 @@ Browser: **http://localhost:3000**
 | POST | `/api/ai/solve-image` | Handwritten image solve |
 | POST | `/api/offline/download` | Save offline chapter |
 
+## GitHub Repository
+
+**Link:** https://github.com/manishaku458/vidhya-ai-up-board
+
+Code upload (terminal mein — GitHub login email: `manishaku458@gmail.com`):
+
+```powershell
+cd "c:\Users\user\Downloads\hack (1)"
+git remote set-url origin https://github.com/manishaku458/vidhya-ai-up-board.git
+git push -u origin main
+```
+
 ## Deploy
 
 - **Render / Railway / Vercel**: `npm start`, set `ANTHROPIC_API_KEY`
