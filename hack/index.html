@@ -1391,9 +1391,11 @@ svg.radar text { font-family:'Noto Sans Devanagari',sans-serif; }
 </div>
 
 <script>
+const API = '';
+
 // ============ APP STATE ============
 const state = {
-  user: { name:'Arjun Verma', class:'Class 10', dialect:'hindi', avatar:'अ' },
+  user: { id:null, name:'Arjun Verma', class:'Class 10', dialect:'hindi', avatar:'अ' },
   currentQ: 0,
   answers: [],
   testActive: false,
@@ -1449,13 +1451,27 @@ function selectDialect(btn, d) {
   selectedDialect = d;
 }
 
-function doLogin() {
+async function doLogin() {
   const name = document.getElementById('inp-name').value.trim() || 'Student';
   const cls = document.getElementById('inp-class').value;
-  state.user.name = name;
-  state.user.class = cls;
-  state.user.dialect = selectedDialect;
-  state.user.avatar = name.charAt(0);
+
+  try {
+    const res = await fetch(API + '/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, class: cls, dialect: selectedDialect }),
+    });
+    const data = await res.json();
+    if (data.user) {
+      state.user = data.user;
+      localStorage.setItem('vidya_user', JSON.stringify(data.user));
+    }
+  } catch (e) {
+    state.user.name = name;
+    state.user.class = cls;
+    state.user.dialect = selectedDialect;
+    state.user.avatar = name.charAt(0);
+  }
 
   document.getElementById('screen-login').classList.remove('active');
   document.getElementById('screen-app').classList.add('active');
@@ -1471,12 +1487,42 @@ function doLogin() {
   };
   document.getElementById('greet-line').textContent = greets[selectedDialect];
 
+  await loadBackendData();
   buildStreakDays();
   buildTopicList();
   buildPapers();
   buildPerformance();
   initQuestions();
-  showOfflineToast('🎉 Welcome! App ready — offline mode active');
+  showOfflineToast('🎉 Welcome! Backend connected — offline mode active');
+}
+
+async function loadBackendData() {
+  try {
+    const [qRes, tRes, pRes] = await Promise.all([
+      fetch(API + '/api/questions'),
+      fetch(API + '/api/topics'),
+      fetch(API + '/api/papers'),
+    ]);
+    if (qRes.ok) {
+      const q = await qRes.json();
+      if (q.length) questions.length = 0, questions.push(...q);
+    }
+    if (tRes.ok) {
+      const t = await tRes.json();
+      if (t.length) topics.length = 0, topics.push(...t);
+    }
+    if (pRes.ok) {
+      const p = await pRes.json();
+      if (p.length) papers.length = 0, papers.push(...p);
+    }
+    if (state.user.id) {
+      const prog = await fetch(API + '/api/progress/' + state.user.id);
+      if (prog.ok) {
+        const data = await prog.json();
+        if (data.user?.streak) state.streak = data.user.streak;
+      }
+    }
+  } catch (e) { /* offline — local data use hoga */ }
 }
 
 // ============ STREAK ============
@@ -1602,7 +1648,7 @@ function skipQuestion() {
   else { loadQuestion(); }
 }
 
-function endTest() {
+async function endTest() {
   clearInterval(testTimerInterval);
   clearInterval(qTimerInterval);
   document.getElementById('question-card').style.display='none';
@@ -1613,7 +1659,6 @@ function endTest() {
   const pct=Math.round((correct/questions.length)*100);
   document.getElementById('result-score').textContent=`${pct}% (${correct}/${questions.length})`;
 
-  // Weak topics
   const subjectScore={};
   questions.forEach((q,i)=>{
     if(!subjectScore[q.subject]) subjectScore[q.subject]={right:0,total:0};
@@ -1621,11 +1666,25 @@ function endTest() {
     if(state.answers[i]===q.correct) subjectScore[q.subject].right++;
   });
 
+  if (state.user.id) {
+    fetch(API + '/api/test/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: state.user.id,
+        score: pct,
+        correct,
+        total: questions.length,
+        subjectScores: subjectScore,
+        answers: state.answers,
+      }),
+    }).catch(() => {});
+  }
+
   let weakHtml='<h4 style="margin-bottom:12px;font-family:\'Baloo 2\',cursive">🔍 Learning Gaps Found:</h4>';
   Object.entries(subjectScore).forEach(([sub,sc])=>{
     const pct2=Math.round((sc.right/sc.total)*100);
     const color=pct2<50?'var(--accent-saffron)':pct2<75?'var(--accent-gold)':'var(--accent-teal)';
-    const tag=pct2<50?'❗ Weak — Zyada Practice':'pct2<75?⚠️ Average':'✅ Strong';
     weakHtml+=`<div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(255,255,255,0.04);border-radius:8px;margin-bottom:8px">
       <span style="flex:1;font-weight:600">${sub}</span>
       <span style="color:${color};font-size:0.85rem">${pct2}%</span>
@@ -1760,19 +1819,13 @@ async function askVoiceQuestion(question){
   document.getElementById('voice-status').textContent='AI soch raha hai...';
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages',{
+    const resp = await fetch(API + '/api/ai/ask',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        system:`Tum ek helpful UP Board teacher ho. Student ke sawaal ka jawab SIRF Hindi mein do (Hinglish allowed hai). 
-        Jawab SHORT aur SIMPLE rakho — jaise ek gaon ka teacher samjhaye. Step-by-step batao. Max 150 words.`,
-        messages:[{role:'user',content:question}]
-      })
+      body:JSON.stringify({ question })
     });
     const d=await resp.json();
-    const ans=d.content?.[0]?.text||'Kshama karo, abhi jawab nahi de sakta.';
+    const ans=d.answer||d.error||'Kshama karo, abhi jawab nahi de sakta.';
     document.getElementById('vr-ai-loading').style.display='none';
     document.getElementById('vr-answer').textContent=ans;
     document.getElementById('voice-status').textContent='Jawab tayaar! ✅';
@@ -1808,29 +1861,13 @@ async function solveHandwritten(base64url) {
   const mimeType=base64url.split(';')[0].split(':')[1];
 
   try {
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    const resp=await fetch(API + '/api/ai/solve-image',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        system:`Tum ek UP Board teacher ho. Student ne copy pe sawaal likha hai. Image dekho aur sawaal identify karo.
-        Phir STEP BY STEP solution do Hindi mein. Format:
-        SAWAAL: [sawaal ka description]
-        STEP 1: [explanation]
-        STEP 2: [explanation]
-        ... aur aise hi
-        ANSWER: [final answer]
-        
-        SIRF Hindi mein likho. Simple language use karo.`,
-        messages:[{role:'user',content:[
-          {type:'image',source:{type:'base64',media_type:mimeType,data:base64}},
-          {type:'text',text:'Is image mein jo sawaal hai uska step-by-step solution do Hindi mein.'}
-        ]}]
-      })
+      body:JSON.stringify({ base64, mimeType })
     });
     const d=await resp.json();
-    const sol=d.content?.[0]?.text||'Image clearly nahi dikh rahi. Dobara try karo.';
+    const sol=d.solution||d.error||'Image clearly nahi dikh rahi. Dobara try karo.';
     document.getElementById('hw-loading').style.display='none';
 
     const steps=sol.split('\n').filter(s=>s.trim());
@@ -1920,16 +1957,24 @@ function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 function downloadChapter(btn, name){
   btn.textContent='⏳ Downloading...';
   btn.disabled=true;
-  setTimeout(()=>{
+  const finish = () => {
     btn.textContent='✅ Downloaded';
     btn.style.color='var(--accent-teal)';
     showOfflineToast(`✅ ${name} chapter offline ke liye save ho gaya!`);
-    // Store in localStorage as marker
     localStorage.setItem(`offline_${name}`,JSON.stringify({
       downloaded: new Date().toISOString(),
       subject: name
     }));
-  },2000);
+  };
+  if (state.user.id) {
+    fetch(API + '/api/offline/download', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: state.user.id, chapter: name }),
+    }).then(finish).catch(() => setTimeout(finish, 1500));
+  } else {
+    setTimeout(finish, 2000);
+  }
 }
 
 // ============ TOAST ============
@@ -1985,6 +2030,18 @@ if('serviceWorker' in navigator){
   const swUrl=URL.createObjectURL(swBlob);
   navigator.serviceWorker.register(swUrl).catch(()=>{});
 }
+
+// ============ SESSION RESTORE ============
+(function restoreSession(){
+  try {
+    const saved = localStorage.getItem('vidya_user');
+    if (saved) {
+      state.user = JSON.parse(saved);
+      document.getElementById('inp-name').value = state.user.name || '';
+      if (state.user.class) document.getElementById('inp-class').value = state.user.class;
+    }
+  } catch(e){}
+})();
 
 // ============ INIT ============
 createParticles();
